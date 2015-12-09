@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+<script type="text/javascript"
+      src="https://www.google.com/jsapi?autoload={
+        'modules':[{
+          'name':'visualization',
+          'version':'1',
+          'packages':['corechart']
+        }]
+      }"></script>
+
+<script type="text/javascript">
+  google.setOnLoadCallback(drawChart);
+
+  function drawChart() {
+    var data = google.visualization.arrayToDataTable([
+      ['TimeStamp', 'Water'],
+       {% for data_point in data %}
+           ['{{ data_point.timestamp }}', {{ data_point.water }}],
+       {% endfor %}
+    ]);
+
+    var options = {
+      title: 'Water',
+      legend: { position: 'bottom' },
+    };
+
+    var water_chart = new google.visualization.AreaChart(document.getElementById('water_chart'));
+
+    water_chart.draw(data, options);
+
+    data = google.visualization.arrayToDataTable([
+      ['TimeStamp', 'Light'],
+       {% for data_point in data %}
+           ['{{ data_point.timestamp }}', {{ data_point.light }}],
+       {% endfor %}
+    ]);
+
+    options = {
+      title: 'Light',
+
+      legend: { position: 'bottom' }
+    };
+
+    var light_chart = new google.visualization.AreaChart(document.getElementById('light_chart'));
+
+    light_chart.draw(data, options);
+
+    var data = google.visualization.arrayToDataTable([
+      ['TimeStamp', 'Temperature'],
+       {% for data_point in data %}
+           ['{{ data_point.timestamp }}', {{ data_point.temperature }}],
+       {% endfor %}
+    ]);
+
+    var options = {
+      title: 'Temperature',
+      legend: { position: 'bottom' }
+    };
+
+    var temperature_chart = new google.visualization.AreaChart(document.getElementById('temperature_chart'));
+
+    temperature_chart.draw(data, options);
+
+    var data = google.visualization.arrayToDataTable([
+      ['TimeStamp', 'Battery'],
+       {% for data_point in data %}
+           ['{{ data_point.timestamp }}', {{ data_point.battery }}],
+       {% endfor %}
+    ]);
+
+    var options = {
+      title: 'Battery',
+      legend: { position: 'bottom' }
+    };
+
+    var battery_chart = new google.visualization.AreaChart(document.getElementById('battery_chart'));
+
+    battery_chart.draw(data, options);
+
+    var data = google.visualization.arrayToDataTable([
+      ['TimeStamp', 'Ecb'],
+       {% for data_point in data %}
+           ['{{ data_point.timestamp }}', {{ data_point.ecb }}],
+       {% endfor %}
+    ]);
+
+    var options = {
+      title: 'Ecb',
+      legend: { position: 'bottom' }
+    };
+
+    var chart = new google.visualization.AreaChart(document.getElementById('ecb_chart'));
+
+    chart.draw(data, options);
+
+    var data = google.visualization.arrayToDataTable([
+      ['TimeStamp', 'EcPorus'],
+       {% for data_point in data %}
+           ['{{ data_point.timestamp }}', {{ data_point.ec_porus }}],
+       {% endfor %}
+    ]);
+
+    var options = {
+      title: 'EcPorus',
+      legend: { position: 'bottom' }
+    };
+
+    var chart = new google.visualization.AreaChart(document.getElementById('ec_porus_chart'));
+
+    chart.draw(data, options);
+
+    var data = google.visualization.arrayToDataTable([
+      ['TimeStamp', 'Dli'],
+       {% for data_point in data %}
+           ['{{ data_point.timestamp }}', {{ data_point.dli }}],
+       {% endfor %}
+    ]);
+
+    var options = {
+      title: 'Dli',
+      legend: { position: 'bottom' }
+    };
+
+    var chart = new google.visualization.AreaChart(document.getElementById('dli_chart'));
+
+    chart.draw(data, options);
+
+    var data = google.visualization.arrayToDataTable([
+      ['TimeStamp', 'Ea'],
+       {% for data_point in data %}
+           ['{{ data_point.timestamp }}', {{ data_point.ea }}],
+       {% endfor %}
+    ]);
+
+    var options = {
+      title: 'Ea',
+      legend: { position: 'bottom' }
+    };
+
+    var chart = new google.visualization.AreaChart(document.getElementById('ea_chart'));
+
+    chart.draw(data, options);
+  }
+</script>
+{% endblock %}
+
+{% block page_content %}
+<div id="water_chart" style="width: 900px; height: 500px"></div>
+<div id="light_chart" style="width: 900px; height: 500px"></div>
+<div id="temperature_chart" style="width: 900px; height: 500px"></div>
+<div id="battery_chart" style="width: 900px; height: 500px"></div>
+<div id="ecb_chart" style="width: 900px; height: 500px"></div>
+<div id="ec_porus_chart" style="width: 900px; height: 500px"></div>
+<div id="dli_chart" style="width: 900px; height: 500px"></div>
+<div id="ea_chart" style="width: 900px; height: 500px"></div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{% endblock %}

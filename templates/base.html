@@ -1,0 +1,65 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %}Florian Hub{% endblock %}
+
+
+{% block head %}
+{{ super() }}
+<style>
+    body {
+      padding-top: 60px;
+    }
+</style>
+{% endblock %}
+
+{% block navbar %}
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Florian Hub</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="/flower/data">Data</a></li>
+            </ul>
+            <ul class="nav navbar-nav">
+                <li><a href="/flower/picture">Webcam</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                {% if user %}
+                    <li><a href="{{ logout_url }}">Logout</a></li>
+                {% else %}
+                    <li><a href="{{ login_url }}">Login</a></li>
+                {% endif %}
+            </ul>
+        </div><!--/.nav-collapse -->
+    </div>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ message }}
+    </div>
+    {% endfor %}
+
+    {% block page_content %}{% endblock %}
+    <hr>
+    <footer>
+        <p>&copy; Dlotan 2015</p>
+    </footer>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{% endblock %}
