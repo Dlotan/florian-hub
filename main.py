@@ -1,7 +1,9 @@
 from flask import Flask, request, render_template, make_response, redirect, flash
 from flask_bootstrap import Bootstrap
-from google.appengine.ext import ndb
+from google.appengine.ext import ndb, blobstore
 from google.appengine.api import mail, users, images
+from google.appengine.ext.webapp import blobstore_handlers
+from werkzeug.http import parse_options_header
 import json
 from datetime import datetime
 import logging
@@ -51,6 +53,10 @@ class Picture(ndb.Model):
     picture = ndb.BlobProperty()
 
 
+class Gif(ndb.Model):
+    blob_key = ndb.BlobKeyProperty()
+
+
 app = Flask(__name__)
 app.secret_key = 'asd123'
 Bootstrap(app)
@@ -73,6 +79,26 @@ def new_flower_picture():
     except Exception as e:
         print(e)
     return "Success"
+
+
+@app.route('/flower/new_gif', methods=['GET', 'POST'])
+def new_flower_gif():
+    return blobstore.create_upload_url('/upload_gif_finished')
+
+
+@app.route('/upload_gif_finished', methods=['POST'])
+def upload_gif_finished():
+    if request.method == 'POST':
+        f = request.files['file']
+        header = f.headers['Content-Type']
+        parsed_header = parse_options_header(header)
+        blob_key = parsed_header[1]['blob-key']
+        gifs = Gif.query().fetch(5)
+        for gif in gifs:
+            blobstore.delete(gif.blob_key)
+        ndb.delete_multi(Gif.query().fetch(keys_only=True))
+        Gif(blob_key=blobstore.blobstore.BlobKey(blob_key)).put()
+        return blob_key
 
 
 @app.route('/email/new', methods=['POST'])
@@ -108,6 +134,22 @@ def flower_picture():
             flash('Only Admins allowed for Webcam', 'error')
             return my_render_template('index.html')
     return redirect(users.create_login_url('/flower/picture'))
+
+
+@app.route('/flower/gif')
+def flower_gif():
+    user = users.get_current_user()
+    if user:
+        if users.is_current_user_admin():
+            gif = Gif.query().fetch(1)[0]
+            blob_info = blobstore.get(gif.blob_key)
+            response = make_response(blob_info.open().read())
+            response.headers['Content-Type'] = blob_info.content_type
+            return response
+        else:
+            flash('Only Admins allowed for Webcam', 'error')
+            return my_render_template('index.html')
+    return redirect(users.create_login_url('/flower/gif'))
 
 
 @app.route('/')
